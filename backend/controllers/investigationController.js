@@ -1,4 +1,5 @@
 import Investigation from '../models/Investigation.js';
+import runTruthEngine from '../services/truthEngine.js';
 
 // @route   POST /api/investigations
 // @desc    Create a new investigation request
@@ -11,16 +12,22 @@ export const createInvestigation = async (req, res) => {
             return res.status(400).json({ message: 'Please provide at least a caption, image URL, or source URL.' });
         }
 
+        // Run the Truth Engine to analyze the content
+        const { credibilityScore, verdict, report } = runTruthEngine(caption, sourceUrl);
+
         const investigation = await Investigation.create({
             user: req.user._id,
             caption,
             imageUrl,
             sourceUrl,
-            status: 'pending',
+            status: 'completed',
+            credibilityScore,
+            verdict,
+            report,
         });
 
         res.status(201).json({
-            message: 'Investigation submitted successfully',
+            message: 'Investigation completed successfully',
             investigation,
         });
     } catch (err) {
