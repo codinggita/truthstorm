@@ -7,8 +7,9 @@
 // Simulated Knowledge Graph (Fact Override Dictionary)
 // In a production app, this would be an API call to a Live Fact Database.
 const KNOWN_FACTS = [
-    { keywords: ['india', 'won', 't20', 'world cup'], regex: /india.*won.*t20.*world cup/i },
-    { keywords: ['earth', 'round'], regex: /earth.*(is|being).*round/i },
+    { keywords: ['india', 'won', 't20'], regex: /india.*won.*t20/i },
+    { keywords: ['earth', 'world', 'round', 'circle'], regex: /(earth|world).*(is|being).*(round|circle|sphere)/i },
+    { keywords: ['earth', 'world', 'flat'], regex: /(earth|world).*(is|being).*flat/i, isFalse: true },
     { keywords: ['water', 'boil'], regex: /water.*boil.*(100|hundred).*celsius/i },
 ];
 
@@ -56,11 +57,17 @@ const runTruthEngine = (caption = '', sourceUrl = '') => {
 
     // --- 0. KNOWLEDGE GRAPH OVERRIDE (Factual Bypasses) ---
     if (caption) {
-        const isKnownFact = KNOWN_FACTS.some(fact => fact.regex.test(caption));
-        if (isKnownFact) {
-            reportLines.push('✅ Verified Fact: The statement references a widely known and historically verifiable fact. (Knowledge Graph Override +95)');
-            if (sourceUrl) reportLines.push('ℹ️ A source URL was provided, but the core claim is independently verifiable.');
-            return { credibilityScore: 95, verdict: 'Likely True', report: reportLines.join('\n\n') };
+        const matchedFact = KNOWN_FACTS.find(fact => fact.regex.test(caption));
+        if (matchedFact) {
+            if (matchedFact.isFalse) {
+                reportLines.push('🚨 Debunked Fact: The statement references a claim that has been universally debunked and proven false. (Knowledge Graph Override +5)');
+                if (sourceUrl) reportLines.push('ℹ️ A source URL was provided, but the core claim is independently verifiable as false.');
+                return { credibilityScore: 5, verdict: 'Likely False', report: reportLines.join('\n\n') };
+            } else {
+                reportLines.push('✅ Verified Fact: The statement references a widely known and historically verifiable fact. (Knowledge Graph Override +95)');
+                if (sourceUrl) reportLines.push('ℹ️ A source URL was provided, but the core claim is independently verifiable.');
+                return { credibilityScore: 95, verdict: 'Likely True', report: reportLines.join('\n\n') };
+            }
         }
     }
 
