@@ -18,8 +18,7 @@ const Signup = () => {
         setError('');
         setLoading(true);
         try {
-            const data = await apiSignup(formData);
-            login(data.user, data.token);
+            await signup(formData);
             navigate('/dashboard');
         } catch (err) {
             setError(err.message || 'Action failed. Please try again.');

@@ -15,6 +15,11 @@ export const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
+        // Basic validation
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'Please provide all required fields' });
+        }
+
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -33,6 +38,7 @@ export const signup = async (req, res) => {
             user: { id: user._id, name: user.name, email: user.email },
         });
     } catch (err) {
+        console.error('Signup Error:', err);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
@@ -43,6 +49,11 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        // Basic validation
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Please provide email and password' });
+        }
 
         // Find user by email
         const user = await User.findOne({ email });
@@ -65,6 +76,7 @@ export const login = async (req, res) => {
             user: { id: user._id, name: user.name, email: user.email },
         });
     } catch (err) {
+        console.error('Login Error:', err);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
