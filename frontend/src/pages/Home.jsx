@@ -99,7 +99,13 @@ const Home = () => {
                 <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tight" style={{fontFamily: 'Outfit, sans-serif', lineHeight: '1.15'}}>
                     <span className="text-zinc-900 dark:text-white">Truth is no longer </span>
                     <br className="hidden sm:block" />
-                    <span className="gradient-text">subjective.</span>
+                    {/* Classified reveal word */}
+                    <span className="reveal-word-wrapper" title="Hover to reveal">
+                        <span className="gradient-text reveal-word">IMMUTABLE.</span>
+                        <span className="reveal-curtain" aria-hidden="true">
+                            <span className="reveal-label">CLASSIFIED</span>
+                        </span>
+                    </span>
                 </h1>
 
                 <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
