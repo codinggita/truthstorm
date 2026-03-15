@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiSignup } from '../services/api';
+import Logo from '../components/Logo';
 
 const Signup = () => {
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
@@ -32,9 +33,9 @@ const Signup = () => {
             
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none -z-10 hidden dark:block" />
 
-            <div className="mb-10 text-center">
-                <Link to="/" className="inline-flex w-12 h-12 rounded-2xl bg-zinc-900 dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 items-center justify-center mb-6 text-xl shadow-sm hover:scale-105 transition-transform">
-                    ⚡
+            <div className="mb-10 text-center flex flex-col items-center">
+                <Link to="/" className="inline-flex mb-6 drop-shadow-lg hover:scale-105 transition-transform">
+                    <Logo className="w-14 h-14" />
                 </Link>
                 <h2 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight" style={{fontFamily: 'Outfit, sans-serif'}}>
                     Create Account
