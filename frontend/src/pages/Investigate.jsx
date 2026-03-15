@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiCreateInvestigation } from '../services/api';
+import Logo from '../components/Logo';
 
 const MAX_IMAGE_SIZE_MB = 4;
 
@@ -76,10 +77,8 @@ const Investigate = () => {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-500/10 blur-[100px] rounded-[100%] pointer-events-none -z-10 hidden dark:block" />
 
             {/* Header */}
-            <div className="mb-10 text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-zinc-900 dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 shadow-sm mb-6 text-xl">
-                    ⚡
-                </div>
+            <div className="mb-10 text-center flex flex-col items-center">
+                <Logo className="w-14 h-14 drop-shadow-lg mb-6 hover:scale-105 transition-transform" />
                 <h2 className="text-4xl font-bold text-zinc-900 dark:text-white mb-3 tracking-tight" style={{fontFamily: 'Outfit, sans-serif'}}>
                     New Investigation
                 </h2>

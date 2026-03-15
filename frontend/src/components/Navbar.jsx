@@ -1,6 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import Logo from './Logo';
+
 
 const Navbar = () => {
     const { user, isAuthenticated, logout } = useAuth();
@@ -19,12 +21,10 @@ const Navbar = () => {
                 
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-2 group">
-                    <div className="w-7 h-7 rounded-full bg-white dark:bg-zinc-800 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 shadow-sm transition-transform group-hover:scale-105">
-                        <span className="text-zinc-900 dark:text-white text-xs font-black">⚡</span>
-                    </div>
-                    <span className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight hover:opacity-80 transition-opacity" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                        TruthStorm
-                    </span>
+                        <Logo className="w-8 h-8 drop-shadow-md transition-transform duration-300 group-hover:scale-105" />
+                        <span className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight hover:opacity-80 transition-opacity" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                            TruthStorm AI
+                        </span>
                 </Link>
 
                 {/* Right side controls */}

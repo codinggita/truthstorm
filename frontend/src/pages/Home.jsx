@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
 import { useEffect, useState } from 'react';
 import { apiGetInvestigations } from '../services/api';
 
@@ -95,13 +96,13 @@ const Home = () => {
                     <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">Gemini 2.5 Flash Engine Active</span>
                 </div>
 
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1]" style={{fontFamily: 'Outfit, sans-serif'}}>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tight" style={{fontFamily: 'Outfit, sans-serif'}}>
                     <span className="text-zinc-900 dark:text-white">Truth is no longer </span>
-                    <br className="hidden md:block" />
-                    <span className="gradient-text">subjective.</span>
+                    <br className="hidden sm:block" />
+                    <span className="gradient-text pb-2 inline-block">subjective.</span>
                 </h1>
 
-                <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+                <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
                     TruthStorm exposes misinformation using advanced multimodal AI. Upload an image, paste a claim, or verify a source in milliseconds.
                 </p>
 
