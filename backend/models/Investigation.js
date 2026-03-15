@@ -55,6 +55,10 @@ const investigationSchema = new mongoose.Schema(
             type: String,
             default: null, // Keep the base64 string to render later in dashboard if uploaded directly
         },
+        analysisTime: {
+            type: Number,
+            default: 0,
+        },
     },
     { timestamps: true }
 );
