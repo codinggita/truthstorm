@@ -2,6 +2,130 @@ import { useState, useEffect } from 'react';
 import { apiGetInvestigations, apiDeleteInvestigation } from '../services/api';
 import { Link } from 'react-router-dom';
 
+const InvestigationCard = ({ inv, onDelete }) => {
+    const [expanded, setExpanded] = useState(false);
+
+    const getScoreStyle = (score) => {
+        if (score === undefined || score === null) return { color: 'text-zinc-500', glow: '' };
+        if (score >= 70) return { color: 'text-emerald-500 dark:text-emerald-400', glow: 'score-true' };
+        if (score >= 40) return { color: 'text-amber-500 dark:text-amber-400', glow: 'score-uncertain' };
+        return { color: 'text-red-500 dark:text-red-400', glow: 'score-false' };
+    };
+
+    const getVerdictBadge = (verdict) => {
+        if (!verdict) return null;
+        const base = "px-2.5 py-1 text-xs font-semibold rounded-md border";
+        if (verdict === 'Likely True') return <span className={`${base} bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400`}>{verdict}</span>;
+        if (verdict === 'Uncertain') return <span className={`${base} bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400`}>{verdict}</span>;
+        return <span className={`${base} bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400`}>{verdict}</span>;
+    };
+
+    const style = getScoreStyle(inv.credibilityScore);
+    // If an image URL was provided but no base64 (older records), use the imageUrl directly
+    const displayImage = inv.imageBase64 || (inv.imageUrl && inv.imageUrl.startsWith('http') ? inv.imageUrl : null);
+
+    return (
+        <div className={`bento-card card-hover group relative transition-all duration-300 ${expanded ? 'ring-1 ring-indigo-500/20' : ''}`}>
+            {/* Clickable header row */}
+            <div
+                className="p-6 cursor-pointer flex flex-col md:flex-row gap-6"
+                onClick={() => setExpanded(prev => !prev)}
+            >
+                {/* Left: Content */}
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-3">
+                        {getVerdictBadge(inv.verdict)}
+                        <span className="text-xs text-zinc-400">
+                            {new Date(inv.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                        {displayImage && (
+                            <span className="text-xs text-indigo-500 dark:text-indigo-400 flex items-center gap-1">
+                                <span>🖼️</span> Has Image
+                            </span>
+                        )}
+                    </div>
+
+                    <h3 className="text-base font-semibold text-zinc-900 dark:text-white mb-2 truncate" title={inv.caption || inv.sourceUrl}>
+                        {inv.caption || inv.sourceUrl || "Image Investigation"}
+                    </h3>
+
+                    {!expanded && (
+                        <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed overflow-hidden"
+                             style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                            {inv.report}
+                        </div>
+                    )}
+                </div>
+
+                {/* Right: Score */}
+                <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 shrink-0 border-t md:border-t-0 md:border-l border-zinc-200 dark:border-white/5 pt-4 md:pt-0 md:pl-6">
+                    {inv.status === 'completed' && inv.credibilityScore !== undefined ? (
+                        <div className={`flex items-center justify-center w-14 h-14 rounded-full border border-zinc-200 dark:border-white/10 shrink-0 bg-white/50 dark:bg-white/5 ${style.glow}`}>
+                            <span className={`text-xl font-bold ${style.color}`} style={{fontFamily: 'Outfit, sans-serif'}}>{inv.credibilityScore}</span>
+                        </div>
+                    ) : (
+                        <div className="w-14 h-14 rounded-full border border-dashed border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
+                            <span className="text-zinc-400 text-xs text-center leading-tight">No<br/>Score</span>
+                        </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs text-zinc-400">{expanded ? '▲ Less' : '▼ More'}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Expanded view */}
+            {expanded && (
+                <div className="px-6 pb-6 border-t border-zinc-200 dark:border-white/5 pt-5 space-y-5">
+                    {/* Image preview */}
+                    {displayImage && (
+                        <div>
+                            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Submitted Evidence</p>
+                            <div className="relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02]">
+                                <img
+                                    src={displayImage}
+                                    alt="Investigation evidence"
+                                    className="w-full max-h-80 object-contain"
+                                    onError={(e) => { e.target.style.display='none'; }}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Full AI report */}
+                    <div>
+                        <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">AI Analysis</p>
+                        <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">{inv.report}</p>
+                    </div>
+
+                    {/* Links + Actions */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-zinc-200 dark:border-white/5">
+                        <div className="flex flex-wrap gap-3">
+                            {inv.sourceUrl && (
+                                <a href={inv.sourceUrl} target="_blank" rel="noreferrer"
+                                    className="text-xs font-medium text-indigo-500 hover:underline inline-flex items-center gap-1">
+                                    Source Article ↗
+                                </a>
+                            )}
+                            {inv.imageUrl && (
+                                <a href={inv.imageUrl} target="_blank" rel="noreferrer"
+                                    className="text-xs font-medium text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 inline-flex items-center gap-1">
+                                    Original Image ↗
+                                </a>
+                            )}
+                        </div>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onDelete(inv._id); }}
+                            className="text-xs font-medium text-zinc-400 hover:text-red-500 transition-colors">
+                            Delete Report
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const Dashboard = () => {
     const [investigations, setInvestigations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -40,21 +164,6 @@ const Dashboard = () => {
         const matchesVerdict = verdictFilter === 'All' || inv.verdict === verdictFilter;
         return matchesSearch && matchesVerdict;
     });
-
-    const getScoreStyle = (score) => {
-        if (score === undefined || score === null) return { color: 'text-zinc-500', glow: '' };
-        if (score >= 70) return { color: 'text-emerald-500 dark:text-emerald-400', glow: 'score-true' };
-        if (score >= 40) return { color: 'text-amber-500 dark:text-amber-400', glow: 'score-uncertain' };
-        return { color: 'text-red-500 dark:text-red-400', glow: 'score-false' };
-    };
-
-    const getVerdictBadge = (verdict) => {
-        if (!verdict) return null;
-        const base = "px-2.5 py-1 text-xs font-semibold rounded-md border";
-        if (verdict === 'Likely True') return <span className={`${base} bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400`}>{verdict}</span>;
-        if (verdict === 'Uncertain') return <span className={`${base} bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400`}>{verdict}</span>;
-        return <span className={`${base} bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400`}>{verdict}</span>;
-    };
 
     if (loading) {
         return (
@@ -121,66 +230,9 @@ const Dashboard = () => {
                 </div>
             ) : (
                 <div className="grid gap-4">
-                    {filteredInvestigations.map((inv) => {
-                        const style = getScoreStyle(inv.credibilityScore);
-                        
-                        return (
-                            <div key={inv._id} className="bento-card p-6 card-hover group relative">
-                                <div className="flex flex-col md:flex-row gap-6">
-                                    
-                                    {/* Left: Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            {getVerdictBadge(inv.verdict)}
-                                            <span className="text-xs text-zinc-400">
-                                                {new Date(inv.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                            </span>
-                                        </div>
-                                        
-                                        <h3 className="text-base font-semibold text-zinc-900 dark:text-white mb-2 truncate" title={inv.caption || inv.sourceUrl}>
-                                            {inv.caption || inv.sourceUrl || "Untitled Investigation"}
-                                        </h3>
-                                        
-                                        <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed overflow-hidden" 
-                                             style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                                            {inv.report}
-                                        </div>
-                                        
-                                        {(inv.imageUrl || inv.sourceUrl) && (
-                                            <div className="mt-4 flex gap-3 text-xs">
-                                                {inv.imageUrl && <span className="text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded">Has Image Attached</span>}
-                                                {inv.sourceUrl && <a href={inv.sourceUrl} target="_blank" rel="noreferrer" className="text-indigo-500 hover:underline inline-flex items-center gap-1">Source Link ↗</a>}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Right: Score & Actions */}
-                                    <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 shrink-0 border-t md:border-t-0 md:border-l border-zinc-200 dark:border-white/5 pt-4 md:pt-0 md:pl-6">
-                                        
-                                        {inv.status === 'completed' && inv.credibilityScore !== undefined ? (
-                                            <div className={`flex items-center justify-center w-14 h-14 rounded-full border border-zinc-200 dark:border-white/10 shrink-0 bg-white/50 dark:bg-white/5 ${style.glow}`}>
-                                                <span className={`text-xl font-bold ${style.color}`} style={{fontFamily: 'Outfit, sans-serif'}}>{inv.credibilityScore}</span>
-                                            </div>
-                                        ) : (
-                                            <div className="w-14 h-14 rounded-full border border-dashed border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
-                                                <span className="text-zinc-400 text-xs text-center leading-tight">No<br/>Score</span>
-                                            </div>
-                                        )}
-
-                                        <button onClick={() => handleDelete(inv._id)}
-                                            className="text-xs font-medium text-zinc-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 hidden md:block mt-auto pb-1">
-                                            Delete
-                                        </button>
-                                        <button onClick={() => handleDelete(inv._id)}
-                                            className="text-xs font-medium text-zinc-500 hover:text-red-500 transition-colors md:hidden">
-                                            Delete
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        );
-                    })}
+                    {filteredInvestigations.map((inv) => (
+                        <InvestigationCard key={inv._id} inv={inv} onDelete={handleDelete} />
+                    ))}
                 </div>
             )}
         </div>
