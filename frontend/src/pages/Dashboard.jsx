@@ -50,29 +50,29 @@ const InvestigationCard = ({ inv, onDelete }) => {
         <div className={`bento-card card-hover group relative transition-all duration-300 ${expanded ? 'ring-1 ring-indigo-500/20' : ''}`}>
             {/* Clickable header row */}
             <div
-                className="p-6 cursor-pointer flex flex-col md:flex-row gap-6"
+                className="p-4 sm:p-6 cursor-pointer flex flex-col md:flex-row gap-4 md:gap-6"
                 onClick={() => setExpanded(prev => !prev)}
             >
                 {/* Left: Content */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center gap-3 mb-2 md:mb-3">
                         {getVerdictBadge(inv.verdict)}
-                        <span className="text-xs text-zinc-400">
+                        <span className="text-[10px] sm:text-xs text-zinc-400">
                             {new Date(inv.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </span>
                         {displayImage && (
-                            <span className="text-xs text-indigo-500 dark:text-indigo-400 flex items-center gap-1">
+                            <span className="text-[10px] sm:text-xs text-indigo-500 dark:text-indigo-400 flex items-center gap-1">
                                 <span>🖼️</span> Has Image
                             </span>
                         )}
                     </div>
 
-                    <h3 className="text-base font-semibold text-zinc-900 dark:text-white mb-2 truncate" title={inv.caption || inv.sourceUrl}>
+                    <h3 className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-white mb-1 md:mb-2 truncate" title={inv.caption || inv.sourceUrl}>
                         {inv.caption || inv.sourceUrl || "Image Investigation"}
                     </h3>
 
                     {!expanded && (
-                        <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed overflow-hidden"
+                        <div className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed overflow-hidden"
                              style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                             {inv.report}
                         </div>
@@ -80,18 +80,18 @@ const InvestigationCard = ({ inv, onDelete }) => {
                 </div>
 
                 {/* Right: Score */}
-                <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 shrink-0 border-t md:border-t-0 md:border-l border-zinc-200 dark:border-white/5 pt-4 md:pt-0 md:pl-6">
+                <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-3 md:gap-4 shrink-0 border-t md:border-t-0 md:border-l border-zinc-200 dark:border-white/5 pt-3 md:pt-0 md:pl-6">
                     {inv.status === 'completed' && inv.credibilityScore !== undefined ? (
-                        <div className={`flex items-center justify-center w-14 h-14 rounded-full border border-zinc-200 dark:border-white/10 shrink-0 bg-white/50 dark:bg-white/5 ${style.glow}`}>
-                            <span className={`text-xl font-bold ${style.color}`} style={{fontFamily: 'Outfit, sans-serif'}}>{inv.credibilityScore}</span>
+                        <div className={`flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-zinc-200 dark:border-white/10 shrink-0 bg-white/50 dark:bg-white/5 ${style.glow}`}>
+                            <span className={`text-lg sm:text-xl font-bold ${style.color}`} style={{fontFamily: 'Outfit, sans-serif'}}>{inv.credibilityScore}</span>
                         </div>
                     ) : (
-                        <div className="w-14 h-14 rounded-full border border-dashed border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
-                            <span className="text-zinc-400 text-xs text-center leading-tight">No<br/>Score</span>
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-dashed border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
+                            <span className="text-zinc-400 text-[10px] sm:text-xs text-center leading-tight">No<br/>Score</span>
                         </div>
                     )}
                     <div className="flex items-center gap-2">
-                        <span className="text-xs text-zinc-400">{expanded ? '▲ Less' : '▼ More'}</span>
+                        <span className="text-[10px] sm:text-xs text-zinc-400">{expanded ? '▲ Less' : '▼ More'}</span>
                     </div>
                 </div>
             </div>
