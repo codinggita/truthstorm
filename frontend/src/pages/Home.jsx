@@ -89,14 +89,14 @@ const Home = () => {
             <div className="premium-gradient-bg" />
             
             {/* Hero */}
-            <section className="relative px-4 pt-20 pb-16 md:pt-32 md:pb-24 lg:pt-40 lg:pb-32 max-w-5xl mx-auto flex flex-col items-center text-center">
+            <section className="relative px-4 pt-12 pb-12 md:pt-32 md:pb-24 lg:pt-40 lg:pb-32 max-w-5xl mx-auto flex flex-col items-center text-center">
                 
-                <div className="mb-8 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md shadow-sm">
+                <div className="mb-6 md:mb-8 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-md shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                    <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">Gemini 2.5 Flash Engine Active</span>
+                    <span className="text-[10px] sm:text-xs font-medium text-zinc-600 dark:text-zinc-300">Gemini 1.5 Flash Engine Active</span>
                 </div>
 
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight" style={{fontFamily: 'Outfit, sans-serif', lineHeight: '1.15'}}>
+                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight" style={{fontFamily: 'Outfit, sans-serif', lineHeight: '1.1'}}>
                     <span className="text-zinc-900 dark:text-white">Truth is no longer </span>
                     <br className="hidden sm:block" />
                     {/* Redacted word — select it to reveal */}
