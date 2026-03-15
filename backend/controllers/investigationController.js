@@ -1,5 +1,6 @@
 import Investigation from '../models/Investigation.js';
 import runTruthEngine from '../services/truthEngine.js';
+import fetch from 'node-fetch'; // Add node-fetch if we need to fetch binary image data from an image URL user provides
 
 // @route   POST /api/investigations
 // @desc    Create a new investigation request
@@ -12,19 +13,42 @@ export const createInvestigation = async (req, res) => {
             return res.status(400).json({ message: 'Please provide at least a caption, image, or source URL.' });
         }
 
+        let finalImageData = imageData; // Assume imageData is {base64, mimeType}
+
+        // If the user provided an imageUrl but no direct file upload, we can attempt to fetch it for the prompt
+        let finalImageBase64 = imageData?.base64 || null;
+
+        if (!finalImageData && imageUrl) {
+             try {
+                 // Try to fetch image data from URL to send to gemini
+                 const res = await fetch(imageUrl);
+                 if (res.ok) {
+                     const buffer = await res.arrayBuffer();
+                     const base64 = Buffer.from(buffer).toString('base64');
+                     const mimeType = res.headers.get('content-type');
+                     if (mimeType && mimeType.startsWith('image/')) {
+                         finalImageData = { base64, mimeType };
+                         finalImageBase64 = base64;
+                     }
+                 }
+             } catch(e) {
+                 console.log("Could not parse image from URL automatically");
+             }
+        }
+
         // Run the Truth Engine to analyze the content (async Gemini API call)
-        // imageData is { base64: string, mimeType: string } if a file was uploaded
-        const { credibilityScore, verdict, report } = await runTruthEngine(caption, sourceUrl, imageData || null);
+        const { credibilityScore, verdict, report } = await runTruthEngine(caption, sourceUrl, finalImageData);
 
         const investigation = await Investigation.create({
             user: req.user._id,
-            caption: caption || (imageData ? '📷 Image Investigation' : ''),
+            caption: caption || (finalImageData ? '📷 Image Investigation' : ''),
             imageUrl,
             sourceUrl,
             status: 'completed',
             credibilityScore,
             verdict,
             report,
+            imageBase64: finalImageBase64 ? `data:${finalImageData?.mimeType || 'image/jpeg'};base64,${finalImageBase64}` : null,
         });
 
         res.status(201).json({

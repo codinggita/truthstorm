@@ -96,10 +96,10 @@ const Home = () => {
                     <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">Gemini 2.5 Flash Engine Active</span>
                 </div>
 
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tight" style={{fontFamily: 'Outfit, sans-serif'}}>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tight" style={{fontFamily: 'Outfit, sans-serif', lineHeight: '1.15'}}>
                     <span className="text-zinc-900 dark:text-white">Truth is no longer </span>
                     <br className="hidden sm:block" />
-                    <span className="gradient-text pb-2 inline-block">subjective.</span>
+                    <span className="gradient-text">subjective.</span>
                 </h1>
 
                 <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
