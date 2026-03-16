@@ -17,10 +17,13 @@ const LoggedInSection = () => {
     const [tipIndex, setTipIndex] = useState(0);
 
     useEffect(() => {
-        apiGetInvestigations().then(data => {
-            const trueCount = data.filter(i => i.verdict === 'Likely True').length;
-            const falseCount = data.filter(i => i.verdict === 'Likely False').length;
-            setStats({ total: data.length, trueCount, falseCount });
+        apiGetInvestigations({ limit: 1000 }).then(data => {
+            const isPaginated = data && typeof data === 'object' && !Array.isArray(data);
+            const list = isPaginated ? data.investigations : (Array.isArray(data) ? data : []);
+            
+            const trueCount = list.filter(i => i.verdict === 'Likely True').length;
+            const falseCount = list.filter(i => i.verdict === 'Likely False').length;
+            setStats({ total: (isPaginated ? data.totalCount : list.length) || 0, trueCount, falseCount });
         }).catch(() => {});
     }, []);
 

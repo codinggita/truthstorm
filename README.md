@@ -3,8 +3,11 @@
 [![Gemini AI](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-blueviolet?style=for-the-badge&logo=google-gemini)](https://deepmind.google/technologies/gemini/)
 [![Vercel Design](https://img.shields.io/badge/Design-Silicon%20Valley%20SaaS-000000?style=for-the-badge)](https://vercel.com/design)
 [![Tech Stack](https://img.shields.io/badge/Stack-MERN-green?style=for-the-badge)](https://www.mongodb.com/mern-stack)
+[![Live Demo](https://img.shields.io/badge/Live-Deployment-success?style=for-the-badge)](https://truststorm.netlify.app/)
 
-**TruthStorm AI** is a professional-grade digital forensics and investigation platform designed to dismantle misleading viral narratives. By combining **multimodal AI analysis** with a **Silicon Valley "Bento" aesthetic**, it empowers users to verify claims, images, and sources in seconds.
+**TruthStorm AI** is a professional-grade digital forensics and investigation platform designed to dismantle misleading viral narratives. [**View Live Platform →**](https://truststorm.netlify.app/)
+
+By combining **multimodal AI analysis** with a **Silicon Valley "Bento" aesthetic**, it empowers users to verify claims, images, and sources in seconds.
 
 ---
 
@@ -88,6 +91,6 @@ The system uses a highly responsive **Event-Driven Analysis** flow:
 
 ---
 
-Built with ⚡ by **Discrete Syndicates** for the Hackathon.
+Built with ⚡ by **Discrete Syndicates**.
 
-TruthStorm AI aims to empower users to verify information before sharing it online, helping reduce the spread of misinformation.
+TruthStorm AI aims to empower users to verify information before sharing it online, helping reduce the spread of misinformation.

@@ -68,12 +68,41 @@ export const createInvestigation = async (req, res) => {
 };
 
 // @route   GET /api/investigations
-// @desc    Get all investigations for the logged-in user
+// @desc    Get paginated investigations for the logged-in user
 // @access  Protected
 export const getMyInvestigations = async (req, res) => {
     try {
-        const investigations = await Investigation.find({ user: req.user._id }).sort({ createdAt: -1 });
-        res.json(investigations);
+        const { page = 1, limit = 10, search = '', verdict = 'All' } = req.query;
+        const pageNum = parseInt(page, 10);
+        const limitNum = parseInt(limit, 10);
+        const skip = (pageNum - 1) * limitNum;
+
+        // Build filter object
+        const filter = { user: req.user._id };
+        
+        if (search) {
+            filter.$or = [
+                { caption: { $regex: search, $options: 'i' } },
+                { sourceUrl: { $regex: search, $options: 'i' } }
+            ];
+        }
+        
+        if (verdict !== 'All') {
+            filter.verdict = verdict;
+        }
+
+        const totalCount = await Investigation.countDocuments(filter);
+        const investigations = await Investigation.find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limitNum);
+
+        res.json({
+            investigations,
+            currentPage: pageNum,
+            totalPages: Math.ceil(totalCount / limitNum),
+            totalCount
+        });
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }
