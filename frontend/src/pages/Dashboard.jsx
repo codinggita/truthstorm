@@ -274,15 +274,42 @@ const Dashboard = () => {
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [verdictFilter, setVerdictFilter] = useState('All');
+    
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const [limit] = useState(10);
 
     useEffect(() => {
         fetchInvestigations();
-    }, []);
+    }, [currentPage, verdictFilter]); // Fetch on page or filter change
+
+    // Debounce search
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            if (currentPage !== 1) {
+                setCurrentPage(1);
+            } else {
+                fetchInvestigations();
+            }
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm]);
 
     const fetchInvestigations = async () => {
+        setLoading(true);
         try {
-            const data = await apiGetInvestigations();
-            setInvestigations(data);
+            const data = await apiGetInvestigations({
+                page: currentPage,
+                limit,
+                search: searchTerm,
+                verdict: verdictFilter
+            });
+            setInvestigations(data.investigations);
+            setTotalPages(data.totalPages);
+            setTotalCount(data.totalCount);
         } catch (err) {
             setError(err.message || 'Failed to load investigations');
         } finally {
@@ -300,12 +327,10 @@ const Dashboard = () => {
         }
     };
 
-    const filteredInvestigations = investigations.filter(inv => {
-        const matchesSearch = inv.caption?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                              inv.sourceUrl?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesVerdict = verdictFilter === 'All' || inv.verdict === verdictFilter;
-        return matchesSearch && matchesVerdict;
-    });
+    const handleFilterChange = (e) => {
+        setVerdictFilter(e.target.value);
+        setCurrentPage(1); // Reset to page 1 on filter change
+    };
 
     if (loading) {
         return (
@@ -347,7 +372,7 @@ const Dashboard = () => {
                            value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                     
                     <select className="input-premium px-4 py-2.5 rounded-lg text-sm appearance-none"
-                            value={verdictFilter} onChange={(e) => setVerdictFilter(e.target.value)}>
+                            value={verdictFilter} onChange={handleFilterChange}>
                         <option value="All">All Verdicts</option>
                         <option value="Likely True">Likely True</option>
                         <option value="Uncertain">Uncertain</option>
@@ -366,16 +391,51 @@ const Dashboard = () => {
                         Start your first scan
                     </Link>
                 </div>
-            ) : filteredInvestigations.length === 0 ? (
-                <div className="py-12 text-center text-zinc-500 dark:text-zinc-400 text-sm">
-                    No matching investigations found.
-                </div>
             ) : (
-                <div className="grid gap-4">
-                    {filteredInvestigations.map((inv) => (
-                        <InvestigationCard key={inv._id} inv={inv} onDelete={handleDelete} />
-                    ))}
-                </div>
+                <>
+                    <div className="grid gap-4 mb-8">
+                        {investigations.map((inv) => (
+                            <InvestigationCard key={inv._id} inv={inv} onDelete={handleDelete} />
+                        ))}
+                    </div>
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between border-t border-zinc-200 dark:border-white/5 pt-6">
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1 || loading}
+                                className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                ← Previous
+                            </button>
+                            
+                            <div className="flex items-center gap-1">
+                                {[...Array(totalPages)].map((_, i) => (
+                                    <button
+                                        key={i + 1}
+                                        onClick={() => setCurrentPage(i + 1)}
+                                        className={`w-8 h-8 rounded-full text-xs font-bold transition-all ${
+                                            currentPage === i + 1
+                                                ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
+                                                : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/5'
+                                        }`}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages || loading}
+                                className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                Next →
+                            </button>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

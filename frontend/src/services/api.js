@@ -43,8 +43,11 @@ export const apiCreateInvestigation = async (data) => {
     return json;
 };
 
-export const apiGetInvestigations = async () => {
-    const res = await fetch(`${API_URL}/investigations`, {
+export const apiGetInvestigations = async (options = {}) => {
+    const { page = 1, limit = 10, search = '', verdict = 'All' } = options;
+    const params = new URLSearchParams({ page, limit, search, verdict });
+    
+    const res = await fetch(`${API_URL}/investigations?${params.toString()}`, {
         headers: getHeaders(),
     });
     const json = await res.json();
