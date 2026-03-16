@@ -18,10 +18,12 @@ const LoggedInSection = () => {
 
     useEffect(() => {
         apiGetInvestigations({ limit: 1000 }).then(data => {
-            const list = data.investigations || [];
+            const isPaginated = data && typeof data === 'object' && !Array.isArray(data);
+            const list = isPaginated ? data.investigations : (Array.isArray(data) ? data : []);
+            
             const trueCount = list.filter(i => i.verdict === 'Likely True').length;
             const falseCount = list.filter(i => i.verdict === 'Likely False').length;
-            setStats({ total: data.totalCount || list.length, trueCount, falseCount });
+            setStats({ total: (isPaginated ? data.totalCount : list.length) || 0, trueCount, falseCount });
         }).catch(() => {});
     }, []);
 

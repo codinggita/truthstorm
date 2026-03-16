@@ -307,9 +307,12 @@ const Dashboard = () => {
                 search: searchTerm,
                 verdict: verdictFilter
             });
-            setInvestigations(data.investigations);
-            setTotalPages(data.totalPages);
-            setTotalCount(data.totalCount);
+            const isPaginated = data && typeof data === 'object' && !Array.isArray(data);
+            const list = isPaginated ? data.investigations : (Array.isArray(data) ? data : []);
+            
+            setInvestigations(list || []);
+            setTotalPages(isPaginated ? data.totalPages : 1);
+            setTotalCount(isPaginated ? data.totalCount : (list?.length || 0));
         } catch (err) {
             setError(err.message || 'Failed to load investigations');
         } finally {
