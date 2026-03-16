@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user);
         localStorage.setItem('truthstorm_user', JSON.stringify(data.user));
         localStorage.setItem('truthstorm_token', data.token);
+        return data;
     };
 
     const signup = async (userData) => {
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user);
         localStorage.setItem('truthstorm_user', JSON.stringify(data.user));
         localStorage.setItem('truthstorm_token', data.token);
+        return data;
     };
 
     const logout = () => {

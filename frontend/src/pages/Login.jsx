@@ -18,8 +18,7 @@ const Login = () => {
         setError('');
         setLoading(true);
         try {
-            const data = await apiLogin(formData);
-            login(data.user, data.token);
+            await login(formData);
             navigate('/dashboard');
         } catch (err) {
             setError(err.message || 'Action failed. Please check credentials.');

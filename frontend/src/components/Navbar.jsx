@@ -22,7 +22,7 @@ const Navbar = () => {
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-2 group">
                         <Logo className="w-8 h-8 drop-shadow-md transition-transform duration-300 group-hover:scale-105" />
-                        <span className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight hover:opacity-80 transition-opacity" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                        <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white tracking-tight hover:opacity-80 transition-opacity hidden xs:block" style={{ fontFamily: 'Outfit, sans-serif' }}>
                             TruthStorm AI
                         </span>
                 </Link>

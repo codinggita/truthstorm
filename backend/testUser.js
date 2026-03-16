@@ -1,30 +1,24 @@
-import runTruthEngine from './services/truthEngine.js';
+import User from './models/User.js';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
 
-const userScreenshotTests = [
-    {
-        name: "User Test 1",
-        caption: "The government is giving ₹50,000 to every citizen who fills this form.",
-        sourceUrl: ""
-    },
-    {
-        name: "User Test 2",
-        caption: "NASA confirms aliens have landed in India and the government is hiding the truth.",
-        sourceUrl: ""
-    },
-    {
-        name: "User Test 3",
-        caption: "This image shows the earthquake damage in Delhi that happened this morning.",
-        sourceUrl: ""
+dotenv.config();
+
+const testUser = async () => {
+    console.log('Testing User model and bcryptjs...');
+    try {
+        const password = 'password123';
+        const hashedPassword = await bcrypt.hash(password, 12);
+        console.log('Hashed password:', hashedPassword);
+        
+        const isMatch = await bcrypt.compare(password, hashedPassword);
+        console.log('Password match:', isMatch);
+        
+        console.log('User model loaded:', !!User);
+    } catch (err) {
+        console.error('Test error:', err);
     }
-];
+};
 
-console.log("=== USER SCREENSHOT TESTS ===\n");
-
-userScreenshotTests.forEach((tc, index) => {
-    const result = runTruthEngine(tc.caption, tc.sourceUrl);
-    console.log(`Test ${index + 1}: ${tc.name}`);
-    console.log(`Caption: "${tc.caption}"`);
-    console.log(`Score:   ${result.credibilityScore} (${result.verdict})`);
-    console.log(`Report:\n${result.report}`);
-    console.log("-".repeat(50));
-});
+testUser();
