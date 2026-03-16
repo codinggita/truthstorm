@@ -6,7 +6,7 @@ import Logo from '../components/Logo';
 const MAX_IMAGE_SIZE_MB = 4;
 
 const Investigate = () => {
-    const [formData, setFormData] = useState({ caption: '', sourceUrl: '' });
+    const [formData, setFormData] = useState({ caption: '', sourceUrl: '', imageUrl: '' });
     const [imageFile, setImageFile] = useState(null);   // { preview, base64, mimeType, name }
     const [dragging, setDragging] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -49,8 +49,8 @@ const Investigate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        if (!formData.caption && !formData.sourceUrl && !imageFile) {
-            setError('Please provide a caption, source URL, or upload an image to investigate.');
+        if (!formData.caption && !formData.sourceUrl && !imageFile && !formData.imageUrl) {
+            setError('Please provide a caption, source URL, image URL, or upload an image to investigate.');
             return;
         }
         try {
@@ -58,6 +58,7 @@ const Investigate = () => {
             await apiCreateInvestigation({
                 caption: formData.caption,
                 sourceUrl: formData.sourceUrl,
+                imageUrl: formData.imageUrl,
                 imageData: imageFile ? { base64: imageFile.base64, mimeType: imageFile.mimeType } : null,
             });
             navigate('/dashboard');
@@ -167,12 +168,23 @@ const Investigate = () => {
                     </div>
 
                     {/* Source URL */}
-                    <div>
-                        <label className={labelClass} htmlFor="sourceUrl">
-                            Source Reference <span className="text-zinc-400 font-normal ml-1">(Optional)</span>
-                        </label>
-                        <input id="sourceUrl" name="sourceUrl" type="url" value={formData.sourceUrl} onChange={handleChange}
-                            placeholder="https://news-site.com/article/123" className="input-premium w-full px-4 py-3 rounded-xl text-sm" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className={labelClass} htmlFor="sourceUrl">
+                                Article / Source Link <span className="text-zinc-400 font-normal ml-1">(Optional)</span>
+                            </label>
+                            <input id="sourceUrl" name="sourceUrl" type="url" value={formData.sourceUrl} onChange={handleChange}
+                                placeholder="https://news-site.com/article/123" className="input-premium w-full px-4 py-3 rounded-xl text-sm" />
+                        </div>
+                        <div>
+                            <label className={labelClass} htmlFor="imageUrl">
+                                Image URL Link <span className="text-zinc-400 font-normal ml-1">(Optional)</span>
+                            </label>
+                            <input id="imageUrl" name="imageUrl" type="url" value={formData.imageUrl} onChange={handleChange}
+                                disabled={!!imageFile}
+                                placeholder={imageFile ? "Image file already attached" : "https://example.com/image.jpg"} 
+                                className="input-premium w-full px-4 py-3 rounded-xl text-sm disabled:opacity-50" />
+                        </div>
                     </div>
 
                     {/* Submit */}
